@@ -2,19 +2,96 @@
 <html>
     <head>
         <title>CSV Report</title>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    </head>
-    <body>
-        <h1>CSV Report</h1>
-        <p>Input:</p>
-        <textarea id='input' cols="40" rows="12">
-        </textarea>
-        <br>
-        <button id='calculate'>Calculate</button>
-        <p>Report</p>
-        <div id='report'>
-            <!-- Report comes here -->
-        </div>
-    </body>
+        <script type="text/javascript"          
+           src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js">
+        </script>
+        <script type="text/javascript" 
 
-</html>
+        	src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+        	<script type="text/javascript" src="jquery.csv-0.71.min.js"></script>
+                <script type="text/javascript">
+        	$(document).ready(function(){
+        		$("#calculate").click(function() {
+
+        			var input_text = $('#input').val();
+        			var parsed_text_array = $.csv.toArrays(input_text);//parse each row into array
+        			var name_hrs = new Array();   //to store unique names
+        			var total_time = new Array(); //to store time for unique record
+                                var report = "";   //used to display output
+                                var num_events = new Array();  //stores total no of events for unique record
+                                var avg_time = new Array();    //average time for each unique record
+        			
+        			for (var i = 0; i < parsed_text_array.length; i++) {
+        				var name = parsed_text_array[i][0];
+        				name = name.charAt(0).toUpperCase()+name.slice(1); //name = firstletter caps
+        				var time = parseFloat(parsed_text_array[i][1]);    
+                                       //Search for a specified value within an array and return its index (or -1 if not found).                              
+
+                                        
+                                        var index = $.inArray(name, name_hrs);      
+                                        
+        				if (index >= 0){    //record already exists
+        					total_time[index] += time;
+                                                num_events[index]++;
+                                                	
+        				}
+        				else {     //new record i.e. index=-1
+
+                                                name_hrs.push( name );
+        					total_time.push(time);
+                                                num_events.push( 1 );
+        					index = name_hrs.length - 1;  //change index value from -1 to max length-1
+        				}
+                                 avg_time[index] = total_time[index] / num_events[index]; 
+        			}
+
+                                                               
+                                // store the column headers and values of report in form of a string
+				report += "<table><tr>";
+				report += "<th>Name</th><th>No Of Events</th><th>Average time</th></tr>";
+				
+                                for (var i = 0; i < name_hrs.length; i++) {
+					report += "<tr><td>" + name_hrs[i] + "</td><td>" + num_events[i] + "</td><td>" + avg_time[i] + "</td></tr>";
+                                        			        
+                                  }
+
+                                                              
+                                // variable report gets appended with table values
+                                $("#myTable > tbody").html(report);  
+        			
+        		});
+        	}); 
+        	</script>
+                 <style>
+		//output table style
+		table {
+		border-collapse:collapse;
+		border:1px solid black;
+		}
+
+		table td { 
+		text-align: center;
+		border:1px solid blue; 
+		}
+
+		table th {
+		border:1px solid red;
+		}
+
+	        </style>	
+        	</head>
+        	<body>
+        	<h1>CSV Report</h1>
+        	<p>Input:</p>
+        	<textarea id='input' cols="40" rows="12">
+        	</textarea>
+        	<br>
+        	<button id='calculate'>Calculate</button>
+        	<p>Report</p>
+        	 <table id="myTable">
+                 <tbody>
+                 </tbody>
+        	  
+        	</body>
+                 
+        	</html>
