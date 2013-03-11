@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 def main():
-    csvfile = open('input.csv', 'r')
+    csvfile = open('test.csv', 'r')
     input_dict = {} # dictionary to store names, events and avg time
     mean=0.0
     for line in csvfile.readlines():
